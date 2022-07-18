@@ -1,0 +1,43 @@
+"""
+    ------------------------------------------
+    Examples of how to update a row in a table
+    ------------------------------------------
+
+    1) user.no_of_logins += 1
+    session.commit()
+    
+    2) session.query(User).\
+        filter(User.username == form.username.data).\
+        update({'no_of_logins': User.no_of_logins + 1})
+    session.commit()
+
+    3) conn = engine.connect()
+    stmt = User.update().\
+        values(no_of_logins=User.no_of_logins + 1).\
+        where(User.username == form.username.data)
+    conn.execute(stmt)
+
+    4) setattr(user, 'no_of_logins', user.no_of_logins + 1)
+    session.commit()
+"""
+
+"""
+-----------------------------------------------------------
+database session management in threads
+-----------------------------------------------------------
+
+
+# set up a scoped_session
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+
+session_factory = sessionmaker(bind=some_engine)
+Session = scoped_session(session_factory)
+
+# now all calls to Session() will create a thread-local session
+some_session = Session()
+
+# you can now use some_session to run multiple queries, etc.
+# remember to close it when you're finished!
+Session.remove()
+"""
