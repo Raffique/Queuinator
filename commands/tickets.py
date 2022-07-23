@@ -58,7 +58,12 @@ def dequeue_tickets(sid:int):
     tickets = stringlist_to_list(service['tickets'])
     if tickets == []:
         return None
-    ticket = tickets[1:]
+
+    ticket = tickets[0]
+    if len(tickets) == 1:
+        tickets = []
+    else:
+        tickets = tickets[1:]
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=str(tickets))
     return ticket
 

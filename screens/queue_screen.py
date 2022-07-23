@@ -7,12 +7,12 @@ from PyQt6.QtCore import QUrl
 from design_patterns import Subscriber, Publisher
 from controller import Controller
 import time
+from os import getcwd
 
 
 class QueueScreen(QDialog, Subscriber):
     def __init__(self, app_map=None, widget=None):
         super(QueueScreen, self).__init__(name='screen')
-        from os import getcwd
         loadUi(getcwd()+"/screens/ui/queue.ui", self)
         self.app_map = app_map
         self.widget = widget
@@ -21,8 +21,9 @@ class QueueScreen(QDialog, Subscriber):
         self.number = 0
 
     def update(self, req, res=None):
-        self.label_6.setText(str(req['number']));
-        self.label_5.setText(str(req['counter']));
+        if req['command'] == 'call':
+            self.call(req, res)
+        
 
     def keyPressEvent(self, e):
         
@@ -45,13 +46,25 @@ class QueueScreen(QDialog, Subscriber):
     def mod(self, val):
         self.label_6.setText(val)
 
-    def call(self, val1, val2):
-        self.label_6.setText(val1)
-        self.label_5.setText(val2)
+    def call(self, req, res=None):
 
-        """ filename = "sound.wav"
+        number = req['number']
+        numbersound = getcwd() + f"/sound/customer{number}.wav"
+        number = f'{number:02}'
+
+        counter = req['counter']
+        countersound = getcwd() + f"/sound/station{counter}.wav"
+        counter = f'{counter}'
+
+        self.label_6.setText(number)
+        self.label_5.setText(counter)
+
+        
         effect = QSoundEffect()
-        effect.setSource(QUrl.fromLocalFile(filename))
+        effect.setSource(QUrl.fromLocalFile(numbersound))
         #effect.setLoopCount(-2)
-        effect.play() """
+        effect.play()
+
+        effect.setSource(QUrl.fromLocalFile(countersound))
+        effect.play()
 

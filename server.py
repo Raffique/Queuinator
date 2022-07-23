@@ -10,7 +10,7 @@ import time
 @singleton
 class Server(Publisher):
 
-    def __init__(self, ip='localhost', port=8080):
+    def __init__(self, ip='localhost', port=8000):
         Publisher.__init__(self)
 
         self.ip = ip

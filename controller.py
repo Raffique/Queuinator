@@ -41,6 +41,7 @@ class Controller(Subscriber, Publisher):
 
     def update(self, req, res=None):
 
+        print(req)
         req = json.loads(req)
         
         if req['command'] == 'call':
