@@ -2,12 +2,15 @@ from PyQt6.QtCore import Qt
 from PyQt6.uic import loadUi
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QDialog, QApplication, QWidget, QStackedWidget, QFileDialog
-from PyQt6.QtMultimedia import QSoundEffect
+from PyQt6.QtMultimedia import QSoundEffect, QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl
 from design_patterns import Subscriber, Publisher
 from controller import Controller
 import time
-from os import getcwd
+from os import getcwd, system
+from sys import platform
+if platform == "win32":
+    import winsound
 
 
 class QueueScreen(QDialog, Subscriber):
@@ -49,22 +52,53 @@ class QueueScreen(QDialog, Subscriber):
     def call(self, req, res=None):
 
         number = req['number']
-        numbersound = getcwd() + f"/sound/customer{number}.wav"
+        numbersound = f"sound/customer{number}.wav"
+        #numbersound = getcwd() + f"\sound\customer{number}.wav"
+        #numbersound = numbersound.replace("\","/")
+
         number = f'{number:02}'
 
         counter = req['counter']
-        countersound = getcwd() + f"/sound/station{counter}.wav"
+        countersound = f"sound/station{counter}.wav"
+        #countersound = getcwd() + f"\sound\station{counter}.wav"
+        #countersound = countersound.replace("\","/")
         counter = f'{counter}'
 
         self.label_6.setText(number)
         self.label_5.setText(counter)
 
-        
-        effect = QSoundEffect()
-        effect.setSource(QUrl.fromLocalFile(numbersound))
-        #effect.setLoopCount(-2)
-        effect.play()
+        if platform == "linux" or platform == "linux2":
+            system("aplay " + numbersound)
+            system("aplay " + countersound)
+        elif platform == "darwin":
+            system("afplay " + numbersound)
+            system("afplay " + countersound)
+        elif platform == "win32":
+            #windows soud giving issues
+            winsound.PlaySound(numbersound, winsound.SND_NOSTOP)
+            winsound.PlaySound(countersound, winsound.SND_NOSTOP)
 
-        effect.setSource(QUrl.fromLocalFile(countersound))
-        effect.play()
+
+        
+        
+        """
+        #effect = QSoundEffect()
+        player = QMediaPlayer()
+        audio_output = QAudioOutput()
+        player.setAudioOutput(audio_output)
+        try:
+            player.setSource(QUrl.fromLocalFile(numbersound))
+            audio_output.setVolume(50)
+            #effect.setLoopCount(-2)
+            player.play()
+        except Exception as e:
+            print(e)
+
+        print(countersound)
+        try:
+            player.setSource(QUrl.fromLocalFile(countersound))
+            player.play()
+        except Exception as e:
+            print(e)
+        """
 

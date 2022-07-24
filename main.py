@@ -3,6 +3,11 @@ from PyQt6.QtWidgets import QApplication, QStackedWidget
 from screens.queue_screen import QueueScreen
 from screens.login_screen import LoginScreen
 from screens.main_screen import MainScreen
+import os
+
+#for windows
+os.environ['QT_MULTIMEDIA_PREFERRED_PLUGINS'] = 'windowsmediafoundation'
+
 
 if __name__ == "__main__":
 
