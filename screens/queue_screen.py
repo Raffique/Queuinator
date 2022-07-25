@@ -26,6 +26,8 @@ class QueueScreen(QDialog, Subscriber):
     def update(self, req, res=None):
         if req['command'] == 'call':
             self.call(req, res)
+        elif req['command'] == 'adjust':
+            self.adjust(req, res)
         
 
     def keyPressEvent(self, e):
@@ -77,8 +79,6 @@ class QueueScreen(QDialog, Subscriber):
             #windows soud giving issues
             winsound.PlaySound(numbersound, winsound.SND_NOSTOP)
             winsound.PlaySound(countersound, winsound.SND_NOSTOP)
-
-
         
         
         """
@@ -102,3 +102,8 @@ class QueueScreen(QDialog, Subscriber):
             print(e)
         """
 
+    def adjust(self, req, res=None):
+
+        number = req['number']
+        number = f'{number:03}'
+        self.label_6.setText(number)

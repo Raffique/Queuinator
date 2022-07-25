@@ -116,10 +116,10 @@ def missed_call(req, res=None, dispatch=None, server=None):
         duration = tw(now) - tw(last)
 
         #put req info in dispatch for screen update
-        dispatch(req={'number': number, "counter":counter})
+        dispatch(req={'command':'call', 'number': number, "counter":counter})
 
         #set up data for boradcasr from server
-        server.broadcast(json.dumps({'number': number, "counter":counter}), res)
+        server.broadcast(json.dumps({'response':'call', 'number': number, "counter":counter}), res)
         
         #Update number and last attribute in Service
         DBManager.mod_row(obj=Service, id=service['id'], attr='number', value=number)

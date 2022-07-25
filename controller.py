@@ -84,3 +84,6 @@ class Controller(Subscriber, Publisher):
         user = {'status', 404}
         user = json.dumps(user)
         res.send(user.encode())
+
+    def lastsave(self):
+        pass

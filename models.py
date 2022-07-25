@@ -14,13 +14,14 @@ class Service(Base):
     name = Column(String)
     sector = Column(String) #when there are multiple services, this is used to identify diffcd vim with alphanumeric numbers like A22 or D22 
     type = Column(Integer, default=0)
-    limit = Column(Integer, default=99)
+    limit = Column(Integer, default=999)
     active = Column(Boolean, default=True)
     number = Column(Integer, default=0)
     created = Column(DateTime, default=datetime.now)
     last = Column(DateTime, default=datetime.now)
     tickets = Column(String, default="[]")
     missed_tickets = Column(String, default="[]")
+    last_dispensed_ticket = Column(Integer, nullable=True)
 
     sub1 = Column(String, default='')
     sub2 = Column(String, default='')

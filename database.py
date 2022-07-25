@@ -82,6 +82,7 @@ class DBManager:
                 'last': obj.last,
                 'tickets': obj.tickets,
                 'missed_tickets': obj.missed_tickets,
+                'last_dispensed_ticket': obj.last_dispensed_ticket,
 
                 'sub1': obj.sub1,
                 'sub2': obj.sub2,

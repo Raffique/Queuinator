@@ -45,7 +45,9 @@ def add_tickets(req, res=None):
 
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=str(tickets))
 
-    res.send(json.dumps({'ticket':ticket}).encode())
+    DBManager.mod_row(obj=Service, id=sid, attr='last_dispensed_ticket', value=ticket)
+
+    res.send(json.dumps({'response':'add ticket', 'ticket':ticket}).encode())
 
 
 def dequeue_tickets(sid:int):
@@ -83,6 +85,35 @@ def check_tickets(req, res=None):
     service = DBManager.get_row(obj=Service, id=sid)
     tickets = stringlist_to_list(service['tickets'])
     res.send(json.dumps({'tickets':tickets}).encode())
+
+
+def forward(req, res=None):
+
+    sid = int(req['sid'])
+    service = DBManager.get_row(obj=Service, id=sid)
+    tickets = stringlist_to_list(service['tickets'])
+
+    if len(tickets) <= 1:
+        tickets = []
+    else:
+        tickets = tickets[1:]
+
+    DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=str(tickets))
+
+def reverse(req, res=None):
+
+    sid = int(req['sid'])
+    service = DBManager.get_row(obj=Service, id=sid)
+    tickets = stringlist_to_list(service['tickets'])
+
+    number = service['number']
+    last_dispensed_ticket = service['last_dispensed_ticket']
+    if last_dispensed_ticket != None:
+        if number <= last_dispensed_ticket:
+            tickets = [number] + tickets
+
+    DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=str(tickets))
+
 
 
 
