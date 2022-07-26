@@ -28,7 +28,8 @@ class Controller(Subscriber, Publisher):
         self.server.register(self)
         self.call = call.call
         self.adjust = adjust.adjust
-        #self.transfer = transfer.transfer
+        self.transfer_req = transfer.transfer_req
+        self.transfer_update = transfer.transfer_update
         #self.announce = announce.announce
         self.sign_in_out = sign_in_out.sign_in_out
 
@@ -45,13 +46,13 @@ class Controller(Subscriber, Publisher):
         req = json.loads(req)
         
         if req['command'] == 'call':
-            print("call activated!!...")
             self.call(req, res, self.dispatch, self.server)
         elif req['command'] == 'adjust':
-            print("number activated!!...")
             self.adjust(req, res, self.dispatch, self.server)
-        elif req['command'] == 'transfer':
-            print("transfer activated!!...")
+        elif req['command'] == 'transfer_req':
+            self.transfer_req(req, res)
+        elif req['command'] == 'transfer_update':
+            self.transfer_update(req, res)
         elif req['command'] == 'announce':
             print("announce activated!!...")
         elif req['command'] == 'sign-in':

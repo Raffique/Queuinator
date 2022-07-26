@@ -8,7 +8,14 @@ import re
 from timewatch import timewatch as tw
 
 
-def transfer(req, res=None):
+def transfer_req(req, res=None):
     
-    trans = req['trans']
-    sid = req['sidc']
+    sid = req['sid']
+    uid = req['req']
+
+    services = DBManager.get_row(obj=Service, active=True)
+    res.send(json.dumps({'response':'transfer_req', 'services':services}).encode())
+
+    
+def transfer_update(req, res=None):
+    pass
