@@ -180,5 +180,5 @@ if __name__ == "__main__":
     #DBManager.mod_row(obj=User, id=1, attr='service1', value=None)
     #DBManager.del_row(History, 1)
     #a = DBManager.get_row(obj=User, id=1)
-    #service = DBManager.get_row(obj=Service, active=True)
-   # print(service)
+    services = DBManager.get_row(obj=Service, active=True)
+    print(services)
