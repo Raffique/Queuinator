@@ -27,7 +27,7 @@ class Server(Publisher):
     def clientthread(self, conn, addr):
     
         # sends a message to the client whose user object is conn
-        conn.send(b"Welcome to this chatroom!")
+        #conn.send(b"Welcome to this chatroom!")
 
         runner = True
     

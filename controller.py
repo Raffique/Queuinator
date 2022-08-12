@@ -42,6 +42,8 @@ class Controller(Subscriber, Publisher):
 
     def update(self, req, res=None):
 
+        #res.send(b"hey there customer")
+
         print(req)
         req = json.loads(req)
         
