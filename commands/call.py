@@ -20,24 +20,20 @@ def call(req, res=None, dispatch=None, server=None):
 
         #retreive Service from database and check if it is active
         service = DBManager.get_row(obj=Service, id=sid)
+
         if service['active'] == False:
             res.send(json.dumps({'status': 'inactive service'}).encode())
             return
+
         sname = service['name']
         sector = service['sector']
         
-        #get current customer nuber and update it
-        """
-        number = service['number']
-        if service['number'] < service['limit']:
-            number += 1
-        else:
-            number = 0
-        """
-        number = dequeue_tickets(sid)
-        if number == None:
+        
+        ticket = dequeue_tickets(sid)
+        if ticket == None:
             #res.send(json.dumps({'status':'empty'}).encode())
             return
+        number = ticket['number']
         print("number -> {}".format(number))
 
         #get current duration from current time - last time
@@ -52,7 +48,6 @@ def call(req, res=None, dispatch=None, server=None):
         server.broadcast(json.dumps({'command':'call-res', 'number': number, "counter":counter, 'sname':sname, 'sector':sector}), res)
         
         #Update number and last attribute in Service
-        DBManager.mod_row(obj=Service, id=service['id'], attr='number', value=number)
         DBManager.mod_row(obj=Service, id=service['id'], attr='last', value=now)
         
 

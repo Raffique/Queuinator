@@ -17,28 +17,22 @@ def adjust(req, res=None, dispatch=None, server=None):
             return
 
         #get current customer nuber and update it
-        number = service['number']
+        number = None
+        
 
         if req['opt'] == '++':
-            forward(req)
-            if service['number'] < service['limit']:
-                number += 1
-            else:
-                number = 0
+            number = forward(req)
         elif req['opt'] == '--':
-            reverse(req)
-            if service['number'] == 0:
-                number = service['limit']
-            else:
-                number -= 1
+            number = reverse(req)
         elif req['opt'] == '=':
-            number = int(req['data'])
+            pass
+
+        if number == None:
+            return
 
         #put req info in dispatch for screen update
         dispatch(req={'command':'adjust', 'number': number})
 
         #set up data for boradcasr from server
-        server.broadcast(json.dumps({'response':'adjust', 'number': number,}), res)
+        server.broadcast(json.dumps({'response':'adjust', 'number': number}), res)
         
-        #Update number and last attribute in Service
-        DBManager.mod_row(obj=Service, id=service['id'], attr='number', value=number)

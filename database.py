@@ -77,12 +77,11 @@ class DBManager:
                 'type': obj.type,
                 'limit': obj.limit,
                 'active': obj.active,
-                'number': obj.number,
                 'created': obj.created,
                 'last': obj.last,
                 'tickets': obj.tickets,
+                'recycle_bin': obj.recycle_bin,
                 'missed_tickets': obj.missed_tickets,
-                'last_dispensed_ticket': obj.last_dispensed_ticket,
 
                 'sub1': obj.sub1,
                 'sub2': obj.sub2,
@@ -165,7 +164,7 @@ class DBManager:
         
 if __name__ == "__main__":
 
-    service = [Service(name='Senior Citizens', sector='B', )]
+    service = [Service(name='Customer Care', sector='A'), Service(name='Teller', sector='B'), Service(name='Senior Citizens', sector='C')]
     user = [User(email='jermainedavis@gmail.com', fname='jermaine', lname='davis', alias='jay', password='xyz123', counter=7, service1=1)]
     history = History(
                 serviceid=1,
@@ -174,11 +173,11 @@ if __name__ == "__main__":
                 username='',
                 number=22,
             )
-    #DBManager.add_row(service[0])
+    DBManager.add_row(service[2])
     #DBManager.add_row(user[0])
     #DBManager.add_row(history)
     #DBManager.mod_row(obj=User, id=1, attr='service1', value=None)
     #DBManager.del_row(History, 1)
     #a = DBManager.get_row(obj=User, id=1)
-    services = DBManager.get_row(obj=Service, active=True)
-    print(services)
+    #services = DBManager.get_row(obj=Service, active=True)
+    #print(services)

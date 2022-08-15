@@ -8,15 +8,6 @@ import re
 from timewatch import timewatch as tw
 
 
-def stringlist_to_list(x:str):
-    if x[0] != '[' and x[-1] != ']':
-        return None
-    if x == "[]":
-        return [] 
-    x = x[1:-1]
-    x = x.split(',')
-    x = [int(y) for y in x]
-    return x
 
 def transfer_req(req, res=None):
     services = DBManager.get_row(obj=Service, active=True)
@@ -27,7 +18,7 @@ def transfer_req(req, res=None):
     for m in range(len(services)):
         print(m)
         if req['sid'] == services[m]['id']:
-            tickets = stringlist_to_list(services[m]['tickets'])
+            tickets = json.loads(services[m]['tickets'])
             idx = m
         else:
             del services[m]['created']

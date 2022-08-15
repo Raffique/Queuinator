@@ -32,6 +32,8 @@ class Controller(Subscriber, Publisher):
         self.transfer_update = transfer.transfer_update
         #self.announce = announce.announce
         self.sign_in_out = sign_in_out.sign_in_out
+        self.add_tickets = tickets.add_tickets
+        self.add_missed_tickets = tickets.add_missed_tickets
 
 
     def startserver(self):
@@ -62,6 +64,8 @@ class Controller(Subscriber, Publisher):
             self.sign_in_out(req, res)
         elif req['command'] == 'sign-out':
             print("sign-out activated!!...")
+        elif req['command'] == 'add_ticket':
+            self.add_tickets(req, res)
            
 
 
