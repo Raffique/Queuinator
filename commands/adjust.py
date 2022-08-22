@@ -13,26 +13,26 @@ def adjust(req, res=None, dispatch=None, server=None):
         #retreive Service from database and check if it is active
         service = DBManager.get_row(obj=Service, id=sid)
         if service['active'] == False:
-            res.send(json.dumps({'status': 'inactive service'}).encode())
+            res.send(json.dumps({'response':'adjust', 'status': 'inactive service'}).encode())
             return
 
         #get current customer nuber and update it
-        number = None
+        ticket, tickets = None, None
         
 
         if req['opt'] == '++':
-            number = forward(req)
+            ticket, tickets = forward(req)
         elif req['opt'] == '--':
-            number = reverse(req)
+            ticket, tickets = reverse(req)
         elif req['opt'] == '=':
             pass
 
-        if number == None:
+        if ticket == None:
             return
 
         #put req info in dispatch for screen update
-        dispatch(req={'command':'adjust', 'number': number})
+        dispatch(req={'command':'adjust', 'number': ticket['number']})
 
         #set up data for boradcasr from server
-        server.broadcast(json.dumps({'response':'adjust', 'number': number}), res)
+        server.broadcast(json.dumps({'response':'adjust', 'ticket': ticket, 'tickets':tickets, 'sid':sid}), res)
         

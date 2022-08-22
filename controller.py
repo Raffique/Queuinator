@@ -6,7 +6,7 @@ from models import *
 import json
 import re
 from timewatch import timewatch as tw
-from commands import call, adjust, transfer, announce, sign_in_out, tickets
+from commands import call, adjust, sign, transfer, announce, tickets
 
 
 def isEmail(email):
@@ -31,9 +31,10 @@ class Controller(Subscriber, Publisher):
         self.transfer_req = transfer.transfer_req
         self.transfer_update = transfer.transfer_update
         #self.announce = announce.announce
-        self.sign_in_out = sign_in_out.sign_in_out
+        self.sign_in = sign.sign_in
         self.add_tickets = tickets.add_tickets
         self.add_missed_tickets = tickets.add_missed_tickets
+        self.missed_call = call.missed_call
 
 
     def startserver(self):
@@ -51,6 +52,14 @@ class Controller(Subscriber, Publisher):
         
         if req['command'] == 'call':
             self.call(req, res, self.dispatch, self.server)
+        elif req['command'] == 'missed_call':
+            self.missed_call(req, res, self.dispatch, self.server)
+
+        elif req['command'] == 'add_ticket':
+            self.add_tickets(req, res, self.server)
+        elif req['command'] == 'add_missed':
+            self.add_missed_tickets(req, res, self.server)
+
         elif req['command'] == 'adjust':
             self.adjust(req, res, self.dispatch, self.server)
         elif req['command'] == 'transfer_req':
@@ -58,14 +67,17 @@ class Controller(Subscriber, Publisher):
         elif req['command'] == 'transfer_update':
             self.transfer_update(req, res)
         elif req['command'] == 'announce':
-            print("announce activated!!...")
-        elif req['command'] == 'sign-in':
+            print("announce activated!!...") 
+
+
+        elif req['command'] == 'sign_in':
             print("sign-in activated!!...")
-            self.sign_in_out(req, res)
-        elif req['command'] == 'sign-out':
+            self.sign_in(req, res)
+        elif req['command'] == 'sign_out':
             print("sign-out activated!!...")
-        elif req['command'] == 'add_ticket':
-            self.add_tickets(req, res)
+        
+        
+
            
 
 

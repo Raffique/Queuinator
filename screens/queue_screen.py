@@ -26,6 +26,8 @@ class QueueScreen(QDialog, Subscriber):
     def update(self, req, res=None):
         if req['command'] == 'call':
             self.call(req, res)
+        elif req['command'] == 'missed_call':
+            self.call(req, res)
         elif req['command'] == 'adjust':
             self.adjust(req, res)
         

@@ -4,18 +4,18 @@ from design_patterns import Subscriber, Publisher
 from database import DBManager
 from models import *
 import json
-import re
 from timewatch import timewatch as tw
 from ticketMaker import TicketMaker as tk
 
 
 
 ############################  TICKET FUNCTIONS ######################################
-def add_tickets(req, res=None):
+def add_tickets(req, res=None, server=None):
 
     sid = int(req['sid'])
 
     service = DBManager.get_row(obj=Service, id=sid)
+    sector = service['sector']
     limit = service['limit']
     x=service['tickets']
     print(type(x))
@@ -30,29 +30,31 @@ def add_tickets(req, res=None):
 
         if number+1 > limit:
             ticket = 0 #set to 0 if numbe is over limit
-            tickets.append(tk(number=ticket, sid=sid).dict())
+            tickets.append(tk(number=ticket, sid=sid, sector=sector).dict())
             
         else:
             if recycle_bin == []:
                 ticket = number #set to 0 if the recycle bin is empty
             else:
                 ticket = number + 1 #set to next number after last nunmber entered in the bin
-            tickets.append(tk(number=ticket, sid=sid).dict())
+            tickets.append(tk(number=ticket, sid=sid, sector=sector).dict())
             
     else:
         temp = tickets[-1]['number']
         if temp+1 > limit:
             ticket = 0
-            tickets.append(tk(number=ticket, sid=sid).dict())
+            tickets.append(tk(number=ticket, sid=sid, sector=sector).dict())
             
         else:
             ticket = temp + 1
-            tickets.append(tk(number=ticket, sid=sid).dict())
+            tickets.append(tk(number=ticket, sid=sid, sector=sector).dict())
             
 
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=json.dumps(tickets))
 
-    res.send(json.dumps({'response':'add ticket', 'ticket':ticket}).encode())
+    
+    mssg = json.dumps({"response":"add_ticket", "tickets":tickets, 'sid':sid})
+    server.broadcast(mssg, res)
 
 
 def dequeue_tickets(sid:int):
@@ -80,7 +82,7 @@ def dequeue_tickets(sid:int):
     DBManager.mod_row(obj=Service, id=sid, attr='recycle_bin', value=json.dumps(recycle_bin))
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=json.dumps(tickets))
 
-    return ticket
+    return ticket, tickets
 
 #this doesnt have any planned use as of yet
 # deletes number from back of queue
@@ -92,25 +94,26 @@ def pop_tickets(req, res=None):
     tickets = tickets[0:-1]
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=str(tickets))
 
-def check_tickets(req, res=None):
-    sid = int(req['sid'])
+"""
+to be deleted if no use is found for said function
+"""
+# def check_tickets(req, res=None):
+#     sid = int(req['sid'])
 
-    service = DBManager.get_row(obj=Service, id=sid)
-    tickets = json.loads(service['tickets'])
-    res.send(json.dumps({'tickets':tickets}).encode())
+#     service = DBManager.get_row(obj=Service, id=sid)
+#     tickets = json.loads(service['tickets'])
+#     res.send(json.dumps({'tickets':tickets}).encode())
 
 
 def forward(req, res=None):
 
     sid = int(req['sid'])
     service = DBManager.get_row(obj=Service, id=sid)
-    print('1')
     tickets = json.loads(service['tickets'])
-    print('2')
     recycle_bin = json.loads(service['recycle_bin'])
 
     if tickets == []:
-        return None
+        return None, None
 
     ticket = tickets[0]
 
@@ -119,17 +122,15 @@ def forward(req, res=None):
     else:
         tickets = tickets[1:]
 
-    print('3')
     recycle_bin.append(ticket)
     #limit size of recycle bin set up a config file for size 
     if len(recycle_bin) >= 100:
         recycle_bin = recycle_bin[1:]
 
-    print('4')
     DBManager.mod_row(obj=Service, id=sid, attr='recycle_bin', value=json.dumps(recycle_bin))
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=json.dumps(tickets))
 
-    return ticket['number']
+    return ticket, tickets
 
 
 def reverse(req, res=None):
@@ -140,7 +141,7 @@ def reverse(req, res=None):
     recycle_bin = json.loads(service['recycle_bin'])
 
     if recycle_bin == []:
-        return None
+        return None, None
 
     ticket = recycle_bin.pop()
     tickets = [ticket] + tickets
@@ -149,12 +150,9 @@ def reverse(req, res=None):
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=json.dumps(tickets))
 
     if recycle_bin != []:
-        return recycle_bin[-1]['number']
+        return recycle_bin[-1], tickets
     else:
-        if ticket['number'] - 1 < 0:
-            return service['limit']
-        else:
-            return ticket['number'] - 1
+        return None, None
 
 
 
@@ -163,34 +161,37 @@ def reverse(req, res=None):
 
 # fix up 
 
-def add_missed_tickets(req, res=None):
+def add_missed_tickets(req, res=None, server=None):
 
-    sid = int(req['sid'])
-    number = int(req['number'])
+    print('1')
+    ticket = req['ticket']
+    sid = req['sid']
 
-    service = DBManager.get_row(obj=Service, id=sid)
-    missed_tickets = json.loads(service['missed_tickets'])
-    missed_tickets.append(number)
-    DBManager.mod_row(obj=Service, id=sid, attr='missed_tickets', value=json(missed_tickets))
-
-    res.send(json.dumps({'status':'OK'}).encode())
-
-def dequeue_missed_tickets(sid:int):
- 
+    #do a security check for validity of request
+    #check if missed ticket request has already been issued, only one missed call request allowed
 
     service = DBManager.get_row(obj=Service, id=sid)
     missed_tickets = json.loads(service['missed_tickets'])
-    if missed_tickets == []:
-        return None
-    ticket = missed_tickets[0]
-    missed_tickets = missed_tickets[1:]
+    missed_tickets.append(ticket)
     DBManager.mod_row(obj=Service, id=sid, attr='missed_tickets', value=json.dumps(missed_tickets))
 
-    return ticket
+    mssg = json.dumps({"response":"add_missed", "missed_tickets":missed_tickets, "sid":sid})
+    server.broadcast(mssg, res)
 
-def check_missed_tickets(req, res=None):
+def dequeue_missed_tickets(req, res=None):
+ 
+    sid = req['sid']
 
-    sid = int(req['sid'])
     service = DBManager.get_row(obj=Service, id=sid)
     missed_tickets = json.loads(service['missed_tickets'])
-    res.send(json.dumps({'missed_tickets':missed_tickets}).encode())
+    recycle_bin = json.loads(service['recycle_bin'])
+    if missed_tickets == []:
+        return None, None
+    ticket = missed_tickets[0]
+    if len(missed_tickets) == 1:
+        missed_tickets = []
+    else:
+        missed_tickets = missed_tickets[1:]
+    DBManager.mod_row(obj=Service, id=sid, attr='missed_tickets', value=json.dumps(missed_tickets))
+
+    return ticket, missed_tickets

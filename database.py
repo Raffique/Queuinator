@@ -144,12 +144,15 @@ class DBManager:
                     records = s.query(kwargs['obj']).filter_by(alias=kwargs['alias']).first()
                 elif key == 'active':
                     records = s.query(kwargs['obj']).filter_by(active=kwargs['active'])
+                elif key == 'all':
+                    records = s.query(kwargs['obj']).all()
+
 
         if records == None:
             return None
 
         if kwargs['obj'] == Service:
-            if 'active' in kwargs.keys():
+            if 'active' in kwargs.keys() or 'all' in kwargs.keys():
                 records = [servicemapper(x) for x in records]
             else:
                 records = servicemapper(records)
@@ -165,7 +168,10 @@ class DBManager:
 if __name__ == "__main__":
 
     service = [Service(name='Customer Care', sector='A'), Service(name='Teller', sector='B'), Service(name='Senior Citizens', sector='C')]
-    user = [User(email='jermainedavis@gmail.com', fname='jermaine', lname='davis', alias='jay', password='xyz123', counter=7, service1=1)]
+    user = [
+        User(email='jermainedavis@gmail.com', fname='jermaine', lname='davis', alias='jay', password='xyz123', counter=2, service1=1),
+        User(email='Raff@gmail.com', fname='raffique', lname='muir', alias='raff', password='', counter=1, service1=1)
+        ]
     history = History(
                 serviceid=1,
                 servicename="Customer Care",
@@ -173,8 +179,8 @@ if __name__ == "__main__":
                 username='',
                 number=22,
             )
-    DBManager.add_row(service[2])
-    #DBManager.add_row(user[0])
+    #DBManager.add_row(service[2])
+    DBManager.add_row(user[0])
     #DBManager.add_row(history)
     #DBManager.mod_row(obj=User, id=1, attr='service1', value=None)
     #DBManager.del_row(History, 1)

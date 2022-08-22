@@ -2,12 +2,13 @@ from datetime import datetime as dt
 import json
 
 class TicketMaker:
-    def __init__(self, number=None, sid=None, dict=None):
+    def __init__(self, number=None, sid=None, sector=None, dict=None):
         if dict != None:
             if type(dict) == type(str):
                 dict = json.loads(dict)
             self.number = dict['number']
             self.sid = dict['sid']
+            self.sector = dict['sector']
             self.year = dict['year']
             self.month = dict['month']
             self.day = dict['day']
@@ -17,6 +18,7 @@ class TicketMaker:
         else:
             self.number = number
             self.sid = sid
+            self.sector = sector
             self.year = dt.now().year
             self.month = dt.now().month
             self.day = dt.now().day
