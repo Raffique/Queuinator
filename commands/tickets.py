@@ -135,12 +135,13 @@ def forward(req, res=None):
 
 def reverse(req, res=None):
 
-    sid = int(req['sid'])
+    sid = req['sid']
     service = DBManager.get_row(obj=Service, id=sid)
     tickets = json.loads(service['tickets'])
     recycle_bin = json.loads(service['recycle_bin'])
 
     if recycle_bin == []:
+        print("recycle bin empty")
         return None, None
 
     ticket = recycle_bin.pop()
@@ -150,9 +151,11 @@ def reverse(req, res=None):
     DBManager.mod_row(obj=Service, id=sid, attr='tickets', value=json.dumps(tickets))
 
     if recycle_bin != []:
+        print("send last entry of recycle bin")
         return recycle_bin[-1], tickets
     else:
-        return None, None
+        print("nothing....")
+        return tk(number=None,sid=sid).dict(), tickets
 
 
 
@@ -175,7 +178,7 @@ def add_missed_tickets(req, res=None, server=None):
     missed_tickets.append(ticket)
     DBManager.mod_row(obj=Service, id=sid, attr='missed_tickets', value=json.dumps(missed_tickets))
 
-    mssg = json.dumps({"response":"add_missed", "missed_tickets":missed_tickets, "sid":sid})
+    mssg = json.dumps({"response":"add_missed", "tickets":missed_tickets, "sid":sid})
     server.broadcast(mssg, res)
 
 def dequeue_missed_tickets(req, res=None):

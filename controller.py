@@ -28,8 +28,7 @@ class Controller(Subscriber, Publisher):
         self.server.register(self)
         self.call = call.call
         self.adjust = adjust.adjust
-        self.transfer_req = transfer.transfer_req
-        self.transfer_update = transfer.transfer_update
+        self.transfer = transfer.transfer
         #self.announce = announce.announce
         self.sign_in = sign.sign_in
         self.add_tickets = tickets.add_tickets
@@ -62,10 +61,8 @@ class Controller(Subscriber, Publisher):
 
         elif req['command'] == 'adjust':
             self.adjust(req, res, self.dispatch, self.server)
-        elif req['command'] == 'transfer_req':
-            self.transfer_req(req, res)
-        elif req['command'] == 'transfer_update':
-            self.transfer_update(req, res)
+        elif req['command'] == 'transfer':
+            self.transfer(req, res, self.server)
         elif req['command'] == 'announce':
             print("announce activated!!...") 
 

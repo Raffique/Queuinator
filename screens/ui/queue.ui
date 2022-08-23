@@ -43,7 +43,7 @@ font-weight: bold;</string>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>110</x>
      <y>140</y>
      <width>261</width>
      <height>41</height>
@@ -77,37 +77,43 @@ font-weight: bold;</string>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>240</y>
-     <width>311</width>
-     <height>201</height>
+     <x>510</x>
+     <y>220</y>
+     <width>351</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 170pt &quot;Sans Serif&quot;;
+    <string notr="true">font: 100pt &quot;Sans Serif&quot;;
 font-weight: bold;
 color: rgb(85, 0, 255);</string>
    </property>
    <property name="text">
-    <string>05</string>
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>240</y>
-     <width>301</width>
-     <height>201</height>
+     <x>50</x>
+     <y>220</y>
+     <width>341</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 170pt &quot;Sans Serif&quot;;
+    <string notr="true">font: 100pt &quot;Sans Serif&quot;;
 font-weight: bold;
 color: rgb(85, 0, 255);</string>
    </property>
    <property name="text">
-    <string>22</string>
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>

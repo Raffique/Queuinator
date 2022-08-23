@@ -79,6 +79,7 @@ class TicketMaker:
         return {
             'number':self.number, 
             'sid':self.sid,
+            'sector':self.sector,
             'year':self.year,
             'month':self.month,
             'day':self.day,

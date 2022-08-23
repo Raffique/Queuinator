@@ -107,5 +107,8 @@ class QueueScreen(QDialog, Subscriber):
     def adjust(self, req, res=None):
 
         number = req['number']
+        if number == None:
+            self.label_6.setText("--") #or "  "
+            return
         number = f'{number:03}'
         self.label_6.setText(number)
